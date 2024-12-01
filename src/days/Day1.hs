@@ -1,14 +1,12 @@
-module DAYS.Day1 (day1) where
+module DAYS.Day1 (day1,pIntPair) where
 
 import Data.List (sort)
+import UTIL.Parsers (lInt, parse', Parser)
+import Text.Megaparsec (many)
 
--- get the left and right lists from the input
-parseInput :: String -> ([Int], [Int])
-parseInput input = (map fst listOfTuples, map snd listOfTuples)
-  where
-    parseLine [x, y] = (read x, read y)
-    parseLine _ = error "bad input"
-    listOfTuples =  map (parseLine . words) $ lines input
+-- lex a pair of integers
+pIntPair :: Parser (Int, Int)
+pIntPair = (,) <$> lInt <*> lInt
 
 part1 :: ([Int], [Int]) -> Int
 part1 ls = 
@@ -21,8 +19,11 @@ part2 ls =
   let occs e = length $ (filter (== e) $ snd ls) 
   in sum $ (map (\x -> x * occs x) $ fst ls)
 
-day1 :: IO (Int, Int)
+day1 :: IO (Either String (Int, Int))
 day1 = do
   content <- readFile "src/inputs/day1.txt"
-  let parsedInput = parseInput content
-  pure $ (part1 parsedInput, part2 parsedInput)
+  case parse' (many pIntPair) content of 
+    Left err -> pure $ Left err
+    Right listOfTuples -> 
+      let tupleOfLists = (map fst listOfTuples, map snd listOfTuples)
+      in pure $ Right (part1 tupleOfLists, part2 tupleOfLists)
