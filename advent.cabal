@@ -63,6 +63,8 @@ executable advent
     -- Modules included in this executable, other than Main.
     other-modules: 
         DAYS.Day1,
+        DAYS.Day2,
+        DAYS.Day3,
         UTIL.Parsers
 
 

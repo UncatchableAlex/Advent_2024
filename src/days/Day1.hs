@@ -1,4 +1,4 @@
-module DAYS.Day1 (day1,pIntPair) where
+module DAYS.Day1 (day1) where
 
 import Data.List (sort)
 import UTIL.Parsers (lInt, parse', Parser)
@@ -10,7 +10,8 @@ pIntPair = (,) <$> lInt <*> lInt
 
 part1 :: ([Int], [Int]) -> Int
 part1 ls = 
-  let sorted = zip (sort $ fst ls) (sort $ snd ls) -- sort the left and right lists and zip them
+  -- sort the left and right lists and zip them
+  let sorted = zip (sort $ fst ls) (sort $ snd ls)
   in sum $ map (\(a,b) -> abs $ a - b) sorted
 
 part2 :: ([Int], [Int]) -> Int
@@ -19,11 +20,11 @@ part2 ls =
   let occs e = length $ (filter (== e) $ snd ls) 
   in sum $ (map (\x -> x * occs x) $ fst ls)
 
-day1 :: IO (Either String (Int, Int))
+day1 :: IO (Int, Int)
 day1 = do
   content <- readFile "src/inputs/day1.txt"
   case parse' (many pIntPair) content of 
-    Left err -> pure $ Left err
+    Left err -> error err
     Right listOfTuples -> 
       let tupleOfLists = (map fst listOfTuples, map snd listOfTuples)
-      in pure $ Right (part1 tupleOfLists, part2 tupleOfLists)
+      in pure $ (part1 tupleOfLists, part2 tupleOfLists)
