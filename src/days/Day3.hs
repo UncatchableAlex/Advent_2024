@@ -7,40 +7,32 @@ maybeIntToInt :: Maybe Int -> Int
 maybeIntToInt m = case m of
   Just i -> i
   Nothing -> 0
+
+pMul :: Parser (Maybe Int)
+pMul = try $ do
+  _ <- string "mul("
+  a <- lInt <* single ','
+  b <- lInt <* single ')'
+  pure $ Just $ a * b
   
 part1 :: String -> Int
-part1 s = case parse' (manyTill pMul eof) s of 
+part1 s = case parse' (manyTill pIn eof) s of 
   Left err -> error err
   Right res -> sum $ map maybeIntToInt res
   where
-    pMul :: Parser (Maybe Int)
-    pMul = choice
-      [ try $ do
-          _ <- string "mul("
-          a <- lInt <* single ','
-          b <- lInt <* single ')'
-          pure $ Just $ a * b, 
-        Nothing <$ anySingle
-      ] 
+    pIn :: Parser (Maybe Int)
+    pIn = choice [pMul, Nothing <$ anySingle] 
 
 
 
 part2 :: String -> Int
-part2 s = case parse' (manyTill pMul eof) s of 
+part2 s = case parse' (manyTill pIn eof) s of 
   Left err -> error err
   Right res -> sum $ map maybeIntToInt res
   where
-    pMul :: Parser (Maybe Int)
-    pMul = choice
-      [
-         try $ do
-          _ <- string "mul("
-          a <- lInt <* single ','
-          b <- lInt <* single ')'
-          pure $ Just $ a * b, 
-        Nothing <$ string "don't()" <* manyTill anySingle (string "do()"),
-        Nothing <$ anySingle
-      ] 
+    pIn :: Parser (Maybe Int)
+    pIn = choice [pMul, pSkip, Nothing <$ anySingle] 
+    pSkip = Nothing <$ string "don't()" <* manyTill anySingle (string "do()")
 
 day3 :: IO (Int, Int)
 day3 = do
