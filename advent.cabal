@@ -81,7 +81,8 @@ executable advent
     -- Other library packages from which modules are imported.
     build-depends:    
         base ^>=4.20.0.0,
-        megaparsec
+        megaparsec,
+        async
 
     -- Directories containing source files.
     hs-source-dirs:   src

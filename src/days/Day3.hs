@@ -1,40 +1,31 @@
 module DAYS.Day3 (day3) where 
-import UTIL.Parsers (parse', lInt, Parser)
+import UTIL.Parsers (parse', Parser)
 import Text.Megaparsec (anySingle, single, choice, try, manyTill, MonadParsec (eof))
 import Text.Megaparsec.Char (string)
+import Text.Megaparsec.Char.Lexer (decimal)
 
-maybeIntToInt :: Maybe Int -> Int
-maybeIntToInt m = case m of
-  Just i -> i
-  Nothing -> 0
-
-pMul :: Parser (Maybe Int)
+pMul :: Parser Int
 pMul = try $ do
-  _ <- string "mul("
-  a <- lInt <* single ','
-  b <- lInt <* single ')'
-  pure $ Just $ a * b
+  a <-  string "mul(" *> decimal <* single ','
+  b <- decimal <* single ')'
+  pure $ a * b
   
 part1 :: String -> Int
 part1 s = case parse' (manyTill pIn eof) s of 
   Left err -> error err
-  Right res -> sum $ map maybeIntToInt res
+  Right res -> sum res
   where
-    pIn :: Parser (Maybe Int)
-    pIn = choice [pMul, Nothing <$ anySingle] 
-
-
+    pIn :: Parser Int
+    pIn = choice [pMul, 0 <$ anySingle] 
 
 part2 :: String -> Int
 part2 s = case parse' (manyTill pIn eof) s of 
   Left err -> error err
-  Right res -> sum $ map maybeIntToInt res
+  Right res -> sum $ res
   where
-    pIn :: Parser (Maybe Int)
-    pIn = choice [pMul, pSkip, Nothing <$ anySingle] 
-    pSkip = Nothing <$ string "don't()" <* manyTill anySingle (string "do()")
+    pIn :: Parser Int
+    pIn = choice [pMul, pSkip, 0 <$ anySingle] 
+    pSkip = 0 <$ string "don't()" <* manyTill anySingle (string "do()")
 
 day3 :: IO (Int, Int)
-day3 = do
-  content <- readFile "src/inputs/day3.txt"
-  pure $ (part1 content, part2 content)
+day3 = readFile "src/inputs/day3.txt" >>= (\x -> pure $ (part1 x, part2 x))
