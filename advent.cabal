@@ -32,7 +32,7 @@ version:            0.1.0.0
 license:            BSD-3-Clause
 
 -- The file containing the license text.
-license-file:       LICENSE
+--license-file:       LICENSE
 
 -- The package author(s).
 author:             alex
@@ -51,7 +51,7 @@ extra-doc-files:    CHANGELOG.md
 -- extra-source-files:
 
 common warnings
-    ghc-options: -Wall
+    ghc-options: -Wall -threaded
 
 executable advent
     -- Import common warning flags.
@@ -82,7 +82,8 @@ executable advent
     build-depends:    
         base ^>=4.20.0.0,
         megaparsec,
-        async
+        async,
+        containers
 
     -- Directories containing source files.
     hs-source-dirs:   src
