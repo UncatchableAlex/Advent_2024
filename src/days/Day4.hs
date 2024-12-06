@@ -2,7 +2,6 @@ module DAYS.Day4 (day4, diagonalize, part1, xmasOnRows) where
 import Data.List (transpose)
 import Data.IntMap.Strict(IntMap, fromListWith, toList)
 
-
 xmasOnRows :: [[Char]] -> Int
 xmasOnRows x = sum $ map xmasOnRows' x 
   where
@@ -20,14 +19,6 @@ diagonalize (x:xs) = map snd $ toList diagMap where
   diagMap = fromListWith (++) diagList
   diagList :: [(Int, [Char])]
   diagList = [(i+j, [n]) | (row, i) <- zip (x:xs) [0..], (n, j) <- zip row [0..]]
-
--- SLOW stateless solution
--- diagonalize :: [[Char]] -> [[Char]]
--- diagonalize [] = []
--- diagonalize (x:xs) = let n = (length xs + length x) - 1 in map diagonalize' [0..n] where
---   diagonalize' :: Int -> [Char]
---   diagonalize' d = [n | (row, i) <- zip (x:xs) [0..], (n, j) <- zip row [0..], i + j == d]
-
 
 part1 :: [[Char]] -> Int
 part1 x = forward  + down + diags1 + diags2 where

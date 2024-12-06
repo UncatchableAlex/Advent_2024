@@ -83,7 +83,8 @@ executable advent
         base ^>=4.20.0.0,
         megaparsec,
         async,
-        containers
+        containers,
+        split
 
     -- Directories containing source files.
     hs-source-dirs:   src

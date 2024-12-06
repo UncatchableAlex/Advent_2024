@@ -4,3 +4,4 @@ dist-newstyle
 *.prof
 *.ps
 *.local
+src/inputs
