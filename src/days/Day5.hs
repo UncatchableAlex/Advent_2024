@@ -13,9 +13,6 @@ parse x =
     parse' (h,t) "\r" = (h,t)
     parse' (h,t) rule = (h, (map read $ splitOn "," $ init rule):t)
 
-validInput :: IntMap [Int] -> [Int] -> Bool
-validInput rules input = foldl' (&&) True [legal rules a b | (a, i) <- zip input [0::Int ..], (b, j) <- zip input [0..], i > j] where 
-
 legal :: IntMap [Int] -> Int -> Int -> Bool -- answers the question: can "a" go before "b" according to a rule set?
 legal rules a b = case lookup a rules of
   Just aRules -> not $ elem b aRules
@@ -24,17 +21,21 @@ legal rules a b = case lookup a rules of
 middle :: [Int] -> Int
 middle input = input !! (length input `div` 2)
 
+validInput :: IntMap [Int] -> [Int] -> Bool
+validInput rules input = foldl' (&&) True 
+  [legal rules a b | (a, i) <- zip input [0::Int ..], (b, j) <- zip input [0..], i > j] 
+
 part1 :: (IntMap [Int], [[Int]]) -> Int
 part1 (rules, inputs) = sum $ map middle $ filter (validInput rules) inputs 
 
 part2 :: (IntMap [Int], [[Int]]) -> Int
-part2 (rules, inputs) = sum $ map middle $ map (sortBy comp) badInputs where
+part2 (rules, inputs) = sum $ map (middle . sortBy comp) badInputs where
   comp :: Int -> Int -> Ordering
   comp a b = compare (legal rules a b) (not $ legal rules a b)
   badInputs :: [[Int]]
   badInputs = filter (not . validInput rules) inputs 
 
--- expected output: (2571,1992)
+-- expected output: (7365,5770)
 day5 :: IO (Int, Int)
 day5 = do
     content <- readFile "src/inputs/day5.txt"

@@ -5,3 +5,4 @@ dist-newstyle
 *.ps
 *.local
 src/inputs/*
+.gitignore
