@@ -9,9 +9,11 @@ parse x =
   let (rules, input) = foldl' parse' ([],[]) x 
   in (fromListWith (++) rules, input) where
     parse' :: ([(Int, [Int])], [[Int]]) -> String -> ([(Int, [Int])], [[Int]])
+    parse' (h,t) [a,b,'|',c,d] = ((read [a,b], [read [c,d]]) : h, t)
     parse' (h,t) [a,b,'|',c,d,'\r'] = ((read [a,b], [read [c,d]]) : h, t)
+    parse' (h,t) "" = (h,t)
     parse' (h,t) "\r" = (h,t)
-    parse' (h,t) rule = (h, (map read $ splitOn "," $ init rule):t)
+    parse' (h,t) rule = (h, (map read $ splitOn "," rule):t)
 
 legal :: IntMap [Int] -> Int -> Int -> Bool -- answers the question: can "a" go before "b" according to a rule set?
 legal rules a b = case lookup a rules of

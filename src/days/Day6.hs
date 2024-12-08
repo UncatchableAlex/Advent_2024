@@ -86,7 +86,7 @@ bothParts arr rowKeyed colKeyed (x,y) dir = case (oob, arr!(x,y), isCycle) of
 day6 :: IO (Int, Int)
 day6 = do
   s <- readFile "src/inputs/day6.txt"
-  let (arr, start,dir) = parse $ splitOn "\r\n" s
+  let (arr, start,dir) = parse $ splitOn "\n" $ filter (/= '\r') s
   let mapByCol = M.fromListWith (++) [(col, [row]) | ((row, col), n) <- assocs arr, n == '#']
   let mapByRow = M.fromListWith (++) [(row, [col]) | ((row, col), n) <- assocs arr, n == '#']
   pure $ bothParts (arr // [(start, 'O')]) mapByRow mapByCol start dir

@@ -85,7 +85,8 @@ executable advent
         async,
         containers,
         split,
-        array
+        array,
+        parallel
 
     -- Directories containing source files.
     hs-source-dirs:   src
