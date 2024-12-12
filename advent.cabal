@@ -86,7 +86,8 @@ executable advent
         containers,
         split,
         array,
-        parallel
+        parallel,
+        mtl
 
     -- Directories containing source files.
     hs-source-dirs:   src
