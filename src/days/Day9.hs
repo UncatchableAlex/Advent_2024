@@ -1,44 +1,33 @@
 module DAYS.Day9 (day9) where 
 
-import Data.List (partition)
+import Data.List (partition, find)
 import Data.List.Split (splitOn)
-import Debug.Trace (trace)
-import Data.List.NonEmpty ( zip, NonEmpty( (:|) ) )
-import Prelude hiding (zip)
 
-data Disk = Disk {
-  free :: [(Int, Int)],
-  used :: [(Int, Int)],
-  freeIdx :: Int,
-  partial :: Int
-} deriving Show 
+partial :: Int -> Int -> Int -> Int
+partial diskSectionStart diskSectionSize diskSectionIdx = 
+  sum [diskSectionStart .. diskSectionStart + diskSectionSize - 1] * diskSectionIdx `div` 2
 
-finalSum :: Disk -> Int 
-finalSum d =  (partial d) + (foldl' (\c (u, i) -> c + u*i) 0 $ used d)
+part1 :: [(Int, Int, Int)] -> [(Int, Int, Int)] -> [(Int, Int, Int)] -> Int
+part1 ((f, a, i):fs) ((u', b, j):us') ((u, c, k):us)
+  | j == k = partial a u k
+  | f > u = (partial a u k) + part1 ((f-u, a+u, i):fs) ((u', b, j):us') us
+  | otherwise = (partial a f k) + (partial b u' j) + part1 fs us' ((u-f,c,k):us)
+part1 _ _ _ = error "not enough free space"
 
-part1 :: NonEmpty Int -> Int
-part1 disk = finalSum $ last $ takeWhile keepGoing $ iterate step $ firstDisk
-    where
-      keepGoing d = case (free d, used d) of
-        ((_,i):_, (_,j):_) -> i < j
-        _ -> error "no disk space"
+part2 :: [(Int, Int, Int)] -> [(Int, Int, Int)] -> Int
+part2 fs ((u, c, k):us) = case find (\(f, _, i) -> f >= u && i < k) fs of  -- find a free spot for the file
+  Just (f, a, i) -> case splitAt (i `div` 2) fs of                          -- modify the free section that we are putting the file into
+    (before, (_:after)) -> partial a u k  + part2 (before ++ (f-u, a+u, i):after) us  
+    _ -> error "impossible case"
+  Nothing -> (partial c u k) + part2 fs us                                 -- if we couldn't find a spot for our file. keep it where it is
+part2 _ [] = 0
 
-      (odds, evens') = partition (\(_, i) -> i `mod` 2 /= 0) $ zip disk (0 :| [1..])
-      firstDisk = Disk {freeIdx = fst $ head 1 evens', partial = 0, free = odds, used = reverse evens'}
-
-      step d = trace (show d) $ case (free d, used d) of
-        ((f,i):fs, (u,j):us) -> if f > u 
-          then d {partial = (j `div` 2)*(sum [i..i+u-1]) + partial d, free = (f-u,i+u):fs, used = us}
-          else d {partial = (j `div` 2)*(sum [i..i+f-1]) + partial d, free = fs, used = (u-f,j+f):us}
-        _ -> error "no disk space"
-      
-
-
--- expected output: (214,809)
+-- expected output: (6288599492129,6321896265143)
 day9 :: IO (Int, Int)
 day9 = do
-  d <- readFile "src/inputs/day9.txt"
-  let disk = drop 1 $ map read $ splitOn "" d
-  print $ part1 disk
-  pure (part1 disk,-1)
-  
+  input <- readFile "src/inputs/day9.txt"
+  let disk = drop 1 $ map read $ splitOn "" input
+  let diskSums = scanl1 (+) (0:disk)
+  let isOdd = (\(_, _, i) -> i `mod` 2 /= 0)
+  let (odds, evens) = partition isOdd $ zip3 disk diskSums [0::Int ..]
+  pure $ (part1 odds (drop 1 evens) $ reverse evens, part2 odds $ reverse evens)
