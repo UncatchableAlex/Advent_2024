@@ -1,4 +1,5 @@
 module DAYS.Day8 (day8) where 
+  
 import Data.List.Split(splitOn)
 import Data.Map.Strict (Map)
 import Data.Set (Set)
