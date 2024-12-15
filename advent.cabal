@@ -72,6 +72,21 @@ executable advent
         DAYS.Day8,
         DAYS.Day9,
         DAYS.Day10,
+        DAYS.Day11,
+        DAYS.Day12,
+        DAYS.Day13,
+        DAYS.Day14,
+        DAYS.Day15,
+        DAYS.Day16,
+        DAYS.Day17,
+        DAYS.Day18,
+        DAYS.Day19,
+        DAYS.Day20,
+        DAYS.Day21,
+        DAYS.Day22,
+        DAYS.Day23,
+        DAYS.Day24,
+        DAYS.Day25,
         UTIL.Parsers
 
 
