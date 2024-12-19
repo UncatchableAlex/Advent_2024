@@ -26,8 +26,6 @@ import DAYS.Day23 (day23)
 import DAYS.Day24 (day24)
 import DAYS.Day25 (day25)
 
-
-
 days :: [IO (Int, Int)]
 days =  [day1, day2, day3, day4, day5, day6, day7, day8, day9, day10, 
         day11, day12, day13, day14, day15, day16, day17, day18, day19, 

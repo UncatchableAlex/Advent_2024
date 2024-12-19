@@ -2,7 +2,6 @@ module DAYS.Day12 (day12) where
 
 import Data.Map.Strict (Map)
 import qualified Data.Map.Strict as M
-import qualified Data.List.NonEmpty as N
 import qualified Data.Set as S
 import Data.Set (Set)
 
@@ -28,36 +27,32 @@ countSides region kernels visited = case visited of
 
 compute :: Map Pos Char -> Pos
 compute plots = (p1, p2) where
-  (p1, p2, _) = N.head $ N.fromList $ dropWhile keepGoing $ iterate step (0, 0, plots)
+  (p1, p2, _) = (dropWhile keepGoing $ iterate step (0, 0, plots)) !! 0
   keepGoing (_, _, unvisited) = M.size unvisited > 0
 
   step :: (Int, Int, Map Pos Char) -> (Int, Int, Map Pos Char)
   step (p1', p2', unvisitedPlots) = 
     let 
-      searchStart = (N.head $ N.fromList $ M.keys unvisitedPlots)
+      searchStart = (M.keys unvisitedPlots) !! 0
       color = (unvisitedPlots M.! searchStart)
       (visited, edges) = bfs S.empty color searchStart
       unvisited' = M.withoutKeys unvisitedPlots visited
-      p1'' = (length edges * S.size visited)
       sides = countSides visited S.empty $ S.toList visited
     in
-       (p1' + p1'', (sides * S.size visited) + p2', unvisited')
+       (p1' + (edges * S.size visited), p2' + (sides * S.size visited), unvisited')
 
-  foldFunction :: Char -> (Set Pos, [Pos]) -> Pos ->  (Set Pos,  [Pos])
+  foldFunction :: Char -> (Set Pos, Int) -> Pos ->  (Set Pos, Int)
   foldFunction color (region, edges') (x,y) = let (region', edges'') = bfs region color (x,y)
-    in (S.union region region', edges' ++ edges'')
+    in (S.union region region', edges' + edges'')
 
   outsideRegion color pos = (not $ M.member pos plots) || plots M.! pos /= color
 
-  bfs :: Set Pos -> Char -> Pos -> (Set Pos, [Pos])
+  bfs :: Set Pos -> Char -> Pos -> (Set Pos, Int)
   bfs visited color (x,y)
-    | outsideRegion color (x,y) = (S.empty, [(x,y)])
-    | S.member (x,y) visited = (S.empty, []) 
-    | otherwise = 
-      let 
-        visited' = S.insert (x,y) visited
-      in 
-        foldl' (foldFunction color) (visited', []) [(x+1,y), (x-1,y), (x, y+1), (x, y-1)]
+    | outsideRegion color (x,y) = (S.empty, 1)
+    | S.member (x,y) visited = (S.empty, 0) 
+    | otherwise = let neighbors = [(x+1,y), (x-1,y), (x, y+1), (x, y-1)] in
+        foldl' (foldFunction color) (S.insert (x,y) visited, 0) neighbors
 
 -- expect (1518548,909564)
 day12 :: IO Pos
