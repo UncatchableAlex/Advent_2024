@@ -11,17 +11,13 @@ pMul = try $ do
   pure $ a * b
   
 part1 :: String -> Int
-part1 s = case parse' (manyTill pIn eof) s of 
-  Left err -> error err
-  Right res -> sum res
+part1 s = sum $ parse' s (manyTill pIn eof)
   where
     pIn :: Parser Int
     pIn = choice [pMul, 0 <$ anySingle] 
 
 part2 :: String -> Int
-part2 s = case parse' (manyTill pIn eof) s of 
-  Left err -> error err
-  Right res -> sum $ res
+part2 s = sum $ parse' s (manyTill pIn eof)
   where
     pIn :: Parser Int
     pIn = choice [pMul, pSkip, 0 <$ anySingle] 

@@ -23,8 +23,6 @@ part2 ls =
 day1 :: IO (Int, Int)
 day1 = do
   content <- readFile "src/inputs/day1.txt"
-  case parse' (many pIntPair) content of 
-    Left err -> error err
-    Right listOfTuples -> 
-      let tupleOfLists = (map fst listOfTuples, map snd listOfTuples)
-      in pure $ (part1 tupleOfLists, part2 tupleOfLists)
+  let listOfTuples = parse' content (many pIntPair)
+  let tupleOfLists = (map fst listOfTuples, map snd listOfTuples)
+  pure $ (part1 tupleOfLists, part2 tupleOfLists)

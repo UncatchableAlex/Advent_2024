@@ -87,7 +87,8 @@ executable advent
         DAYS.Day23,
         DAYS.Day24,
         DAYS.Day25,
-        UTIL.Parsers
+        UTIL.Parsers,
+        UTIL.Util
 
 
     -- LANGUAGE extensions used by modules in this package.

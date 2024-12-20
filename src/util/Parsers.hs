@@ -37,10 +37,10 @@ lInt = lexeme $ read <$> some (satisfy isDigit)
 consumeNewline :: Parser a -> Parser a
 consumeNewline p = p <* newline 
 
-parse' :: Parser a -> String -> Either String a
-parse' p input = case parse (space *> p <* eof) "" input of 
-  Left err -> Left $ errorBundlePretty err
-  Right res -> Right $ res
+parse' :: String -> Parser a -> a
+parse' input p = case parse (space *> p <* eof) "" input of 
+  Left err -> error $ errorBundlePretty err
+  Right res -> res
 
 parseArrayOfInts :: String -> Array (Int, Int) Int
 parseArrayOfInts input = A.array bnds eles where
