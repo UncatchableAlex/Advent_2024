@@ -77,6 +77,7 @@ executable advent
         DAYS.Day13,
         DAYS.Day14,
         DAYS.Day15,
+        DAYS.Day15_Pure,
         DAYS.Day16,
         DAYS.Day17,
         DAYS.Day18,

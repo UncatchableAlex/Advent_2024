@@ -7,6 +7,7 @@ import DAYS.Day12 (day12)
 import DAYS.Day13 (day13)
 import DAYS.Day14 (day14)
 import DAYS.Day15 (day15)
+--import DAYS.Day15_Pure (day15Pure)
 import DAYS.Day16 (day16)
 import DAYS.Day17 (day17)
 import DAYS.Day18 (day18)
@@ -43,6 +44,7 @@ days =
     day13,
     day14,
     day15,
+  --  day15Pure,
     day16,
     day17,
     day18,
