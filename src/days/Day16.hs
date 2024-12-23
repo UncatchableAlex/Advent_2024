@@ -1,4 +1,4 @@
-module DAYS.Day16 (day16) where 
+module DAYS.Day16 (day16) where
 
 day16 :: IO (Int, Int)
 day16 = do

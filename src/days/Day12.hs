@@ -20,9 +20,15 @@ countSides region kernels visited = case visited of
       isOpDiag k =
         ((S.member (k !! 0) region) && (S.member (k !! 3) region))
           || ((S.member (k !! 1) region) && (S.member (k !! 2) region))
+
       normalCorners = filter (\k -> kcount k `mod` 2 == 1) ks
-      kernels' = foldl' (\set kernel -> S.insert (kernel !! 0) set) kernels normalCorners
+
+      insertFirst set kernel = S.insert (kernel !! 0) set
+
+      kernels' = foldl' insertFirst kernels normalCorners
+
       opDiagCorners = filter (\k -> kcount k == 2 && isOpDiag k) ks
+
       corners = (length normalCorners) + (length opDiagCorners)
   [] -> 0
 
@@ -30,6 +36,7 @@ compute :: Map Pos Char -> Pos
 compute plots = (p1, p2)
   where
     (p1, p2, _) = (dropWhile keepGoing $ iterate step (0, 0, plots)) !! 0
+
     keepGoing (_, _, unvisited) = M.size unvisited > 0
 
     step :: (Int, Int, Map Pos Char) -> (Int, Int, Map Pos Char)
@@ -39,14 +46,19 @@ compute plots = (p1, p2)
           (visited, edges) = bfs S.empty color searchStart
           unvisited' = M.withoutKeys unvisitedPlots visited
           sides = countSides visited S.empty $ S.toList visited
-       in (p1' + (edges * S.size visited), p2' + (sides * S.size visited), unvisited')
+       in ( p1' + (edges * S.size visited),
+            p2' + (sides * S.size visited),
+            unvisited'
+          )
 
     foldFunction :: Char -> (Set Pos, Int) -> Pos -> (Set Pos, Int)
     foldFunction color (region, edges') (x, y) =
       let (region', edges'') = bfs region color (x, y)
        in (S.union region region', edges' + edges'')
 
-    outsideRegion color pos = (not $ M.member pos plots) || plots M.! pos /= color
+    outsideRegion color pos =
+      (not $ M.member pos plots)
+        || plots M.! pos /= color
 
     bfs :: Set Pos -> Char -> Pos -> (Set Pos, Int)
     bfs visited color (x, y)
@@ -60,5 +72,10 @@ compute plots = (p1, p2)
 day12 :: IO Pos
 day12 = do
   input <- readFile "src/inputs/day12.txt"
-  let plots = M.fromList $ [((i, j), x) | (row, i) <- zip (lines input) [0 ..], (x, j) <- zip row [0 ..]]
+  let plots =
+        M.fromList $
+          [ ((i, j), x)
+          | (row, i) <- zip (lines input) [0 ..],
+            (x, j) <- zip row [0 ..]
+          ]
   pure $ compute $ plots
