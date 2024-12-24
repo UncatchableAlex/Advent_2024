@@ -45,7 +45,7 @@ part1 maze = case step initialQ (M.singleton (start, (0, -1)) 0) of
 
         -- update the visited map with all the places we just put into the pqueue (and the corresponding scores)
         let visited' = foldl' (\m (p,d,s) -> M.insert (p,d) s m) visited $ map (\(s, (p, d, _)) -> (p, d, s)) ms
-        let otherSolutions = takeWhile (\(score',_) -> score == score') $ PQ.extractAll q'
+        let otherSolutions = takeWhile (\(score',(pos',_,_)) -> (score, pos) == (score', pos')) $ PQ.extractAll q'
         let otherPaths = S.unions $ map (\(_, (_,_,p)) -> S.fromList p) otherSolutions
         if pos == end && (length q' /= 0) -- check to make sure that path's still exist
           then Just (score,  S.union otherPaths $ S.fromList path)
