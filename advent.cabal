@@ -45,23 +45,20 @@ maintainer:         mjk711@alumni.ku.dk
 build-type:         Simple
 
 -- Extra doc files to be distributed with the package, such as a CHANGELOG or a README.
-extra-doc-files:    CHANGELOG.md
+-- extra-doc-files:    CHANGELOG.md
 
 -- Extra source files to be distributed with the package, such as examples, or a tutorial module.
 -- extra-source-files:
 
-common warnings
+common common
     ghc-options: -Wall -threaded
+    default-language: Haskell2010
 
-executable advent
-    -- Import common warning flags.
-    import:           warnings
-
-    -- .hs or .lhs file containing the Main module.
-    main-is:          Main.hs
+library
+    import:  common
 
     -- Modules included in this executable, other than Main.
-    other-modules: 
+    exposed-modules: 
         DAYS.Day1,
         DAYS.Day2,
         DAYS.Day3,
@@ -89,8 +86,9 @@ executable advent
         DAYS.Day24,
         DAYS.Day25,
         UTIL.Parsers,
-        UTIL.Util
-
+        UTIL.Util,
+        UTIL.PQueue,
+        TESTS.PQueueTests
 
     -- LANGUAGE extensions used by modules in this package.
     -- other-extensions:
@@ -105,10 +103,78 @@ executable advent
         array,
         parallel,
         mtl,
-        transformers
+        transformers,
+        tasty,
+        tasty-hunit,
+        QuickCheck^>=2.15.0.1
 
     -- Directories containing source files.
     hs-source-dirs:   src
 
-    -- Base language which the package is written in.
-    default-language: Haskell2010
+
+executable advent
+    import: common
+    -- .hs or .lhs file containing the Main module.
+    hs-source-dirs:   src
+    main-is: Main.hs
+    build-depends:    
+        base ^>=4.20.0.0,
+        advent,
+        megaparsec,
+        async,
+        containers,
+        split,
+        array,
+        parallel,
+        mtl,
+        transformers,
+        tasty,
+        tasty-hunit,
+        QuickCheck^>=2.15.0.1
+
+    other-modules:
+        DAYS.Day1,
+        DAYS.Day2,
+        DAYS.Day3,
+        DAYS.Day4,
+        DAYS.Day5,
+        DAYS.Day6,
+        DAYS.Day7,
+        DAYS.Day8,
+        DAYS.Day9,
+        DAYS.Day10,
+        DAYS.Day11,
+        DAYS.Day12,
+        DAYS.Day13,
+        DAYS.Day14,
+        DAYS.Day15,
+        DAYS.Day15_Pure,
+        DAYS.Day16,
+        DAYS.Day17,
+        DAYS.Day18,
+        DAYS.Day19,
+        DAYS.Day20,
+        DAYS.Day21,
+        DAYS.Day22,
+        DAYS.Day23,
+        DAYS.Day24,
+        DAYS.Day25,
+        UTIL.Parsers,
+        UTIL.Util,
+        UTIL.PQueue,
+        TESTS.PQueueTests
+
+
+test-suite advent-test
+    import: common
+    type: exitcode-stdio-1.0
+   -- hs-source-dirs:   tests
+    main-is: runtests.hs
+    
+    build-depends:
+        base
+        , tasty
+        , advent
+        , tasty
+        , tasty-hunit
+        , QuickCheck^>=2.15.0.1

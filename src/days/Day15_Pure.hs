@@ -56,7 +56,7 @@ moveRobot (warehouse, rmoves) = gpsScore $ fst $ foldl' step (warehouse, start) 
 step :: (Warehouse, Pos) -> Char -> (Warehouse, Pos)
 step (grid, pos) move =
   let pos' = translate pos move
-    in case doMove grid pos move of
+   in case doMove grid pos move of
         Just grid' -> (grid', pos')
         Nothing -> (grid, pos)
 
