@@ -2,11 +2,12 @@
 -- by Alex
 {-# LANGUAGE ScopedTypeVariables #-}
 
-module UTIL.PQueue (PQueue, empty, pop, push, merge, extractAll, fromList, pushAll) where
+module UTIL.PQueue (PQueue, empty, pop, push, merge, extractAll, fromList, pushAll, size, popIdentical) where
 import Data.Foldable (minimumBy)
 import Data.Function (on)
+import Debug.Trace (trace)
 
--- a Node can either be a tree with a rank, key-value pair and subtrees
+-- a Node has a rank, key-value pair and subtrees
 data Node k v = Node Int (k, v) [Node k v]
   deriving Show
 
@@ -31,6 +32,9 @@ children (Node _ (_, _) kids) = kids
 empty :: Ord k => PQueue k v
 empty = [] 
 
+size :: Ord k => PQueue k v -> Int
+size q = sum $ map ((\x -> 2^x) . order) q 
+
 merge :: forall k v. Ord k => PQueue k v -> PQueue k v -> PQueue k v
 merge (x:xs) (y:ys)
   | order x > order y = x : (merge xs (y:ys))
@@ -54,6 +58,17 @@ pop [] = Nothing
 pop q = Just (kv target, merge (snip q target) (children target))
   where 
     target = minimumBy (compare `on` key) q
+
+popIdentical :: forall k v. (Show k, Ord k, Eq v, Show v) => PQueue k v -> Maybe ((k,v), PQueue k v)
+popIdentical [] = Nothing
+popIdentical q = 
+  let 
+    target = minimumBy (compare `on` key) q
+    q' = merge (snip q target) (children target)
+  in
+    if length q' == 0 || (kv $ minimumBy (compare `on` key) q') /= (kv target)
+      then Just (kv target, q')   
+      else trace ("popping") popIdentical q'
 
 push :: Ord k => (k,v) -> PQueue k v -> PQueue k v
 push x q = merge q [Node 0 x []]

@@ -3,10 +3,10 @@
 module TESTS.PQueueTests (tests) where
 
 import Data.List (sort)
-import Test.QuickCheck ((===), Property, quickCheck)
+import Test.QuickCheck ((===), Property, quickCheck, property, counterexample, (.&&.))
 import Test.Tasty (TestTree, testGroup)
 import Test.Tasty.HUnit (testCase, (@?=))
-import UTIL.PQueue (PQueue, merge, pop, push, empty, fromList, extractAll)
+import UTIL.PQueue (PQueue, merge, pop, push, empty, fromList, extractAll, popIdentical)
 import Debug.Trace (trace)
 
 
@@ -26,6 +26,29 @@ prop_mergePreservesElements xs ys =
       extractedKeys = sort $ map fst $ extractAll merged
       originalKeys = sort $ map fst $ xs ++ ys
    in extractedKeys === originalKeys
+
+
+prop_popIdentical :: Property
+prop_popIdentical = 
+  let 
+    -- Create a queue with some duplicate keys
+    q = foldl (\acc (k,v) -> push (k,v) acc) empty ([
+        (1, "a"),
+        (1, "b"),
+        (1, "c"),
+        (2, "d"),
+        (3, "e")
+      ] :: [(Int, String)])
+    q' = popIdentical q
+  in
+    case q' of
+      Nothing -> property False -- Should not happen with non-empty queue
+      Just ((k,v), q'') -> 
+        case popIdentical q'' of
+          Nothing -> property False
+          Just ((k',v'), _) ->
+            -- Should get the first non-1 key
+           (k,v,k',v') === (1,"a",2,"d")
 
 -- Unit tests
 tests :: TestTree
