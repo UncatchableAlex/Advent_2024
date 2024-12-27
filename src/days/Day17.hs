@@ -6,9 +6,7 @@ import Text.Megaparsec (sepBy)
 import Text.Megaparsec.Char (char, eol, string)
 import Text.Megaparsec.Char.Lexer (decimal)
 import UTIL.Parsers (Parser, parse')
-import Data.Bits (xor, (.|.), (.>>.), (.<<.))
-import qualified Data.Bits as B
-import Debug.Trace (trace)
+import Data.Bits (xor, (.|.), (.<<.))
 import Data.Maybe (catMaybes)
 
 type Registers = (Int, Int, Int)
@@ -65,49 +63,30 @@ part1 i (regs, prog) = if i == length prog then [] else performInstr
         (7, op) -> let c' = a `div` (2 ^ comboOp op regs) in part1 (i + 2) ((a,b,c'), prog)
         _ -> error "invalid instruction"
   
-bruteForce :: Int -> Int -> Int -> (Registers, Program) -> [Int]
-bruteForce a target s (regs, prog) = 
-  if s == 0 then [] else 
-  if (take target $ part1 0 ((a,0,0), prog)) == (take target $ A.elems prog) 
-    then a : bruteForce (a+1) target (s-1) (regs, prog)
-    else bruteForce (a+1) target s (regs, prog)
-
-part2 :: Int -> (Registers, Program) -> Int 
-part2 j (regs, prog) = case part2' 1 j of 
+-- do bfs on output right to left
+part2 :: (Registers, Program) -> Int 
+part2 (_, prog) = case part2' (length prog - 1) 0  of 
   Just a -> a
-  Nothing -> trace (show j) $ part2  (j+1) (regs, prog)
+  Nothing -> error "no quine detected"
   where
     progLs = A.elems prog
     part2' :: Int -> Int -> Maybe Int
-    part2' i a = if i == 11 then Just a else 
-      case --trace ("recurse" ++ show recurse) 
-          recurse of
+    part2' i a = if i == -1 then Just a else 
+      case recurse of
         (x:xs) -> Just $ minimum (x:xs)
         _ -> Nothing
       where 
-        positioniCandidates = map (\y -> a .|. (y .<<. ((i*3)+4)))  [0..15]
-
-        possibleSeqs = filter (\y -> (take i (part1 0 ((y, 0, 0), prog))) == (take i progLs)) positioniCandidates
-
-        seqResults = map (\y -> part1 0 ((y, 0, 0), prog)) positioniCandidates
-        recurse = 
-                  -- trace ("\na: " ++ show a ++ 
-                  --       "\ni: " ++ show i ++ 
-                  --        "\ncandidates: " ++ show positioniCandidates ++ 
-                  --        "\nseq results: " ++ show (zip positioniCandidates seqResults) ++
-                  --        "\npossible seqs: " ++ show possibleSeqs
-                  --         ) $ 
-                          catMaybes $ map (\y -> part2' (i+1) y ) possibleSeqs        
+        positioniCandidates = map (\y -> a .|. (y .<<. (i*3)))  [0..7]
+        validSeq y = (drop i (part1 0 ((y, 0, 0), prog))) == (drop i progLs)
+        possibleSeqs = filter validSeq positioniCandidates
+        recurse = catMaybes $ map (\y -> part2' (i-1) y ) possibleSeqs        
 
 day17 :: IO (Int, Int)
 day17 = do
   input <- readFile "src/inputs/day17.txt"
-  let p1 = parse' input ((part1 0) <$> pComputerState) in print p1
-  --let p2 = (parse' input ((bruteForce 0 6 10) <$> pComputerState)) in print p2
-  --let p2 = (parse' input ((part2 0) <$> pComputerState)) in print p2
-  pure $ (-1, -1)
+  let p1' = parse' input ((part1 0) <$> pComputerState)
 
-
--- [2,1,5,1,0,1,2,1,6]
--- 215101216
--- incorrect ^
+  -- turn list output into int
+  let p1 = let n = length p1' in sum $ map (\(x,i) -> x*(10^i)) $ zip p1' [n-1,n-2..0]
+  let p2 = (parse' input (part2 <$> pComputerState))
+  pure $ (p1,p2)
