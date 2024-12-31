@@ -58,7 +58,7 @@ days =
   ]
 
 main :: IO ()
-main = mapM_ printDay $ zip days [1 .. 20]
+main = mapM_ printDay $ zip days [1 .. 25]
   where
     printDay :: (IO (Int, Int), Int) -> IO ()
     printDay (x, i) = x >>= (\y -> print ("Day " ++ (show i) ++ ":  " ++ show y))
