@@ -1,7 +1,7 @@
 module Main where
 
 --import Y2024
-import Y2025
+import Y2025 (days)
 
 main :: IO ()
 main = mapM_ printDay $ zip days [1 .. 25]
