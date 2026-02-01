@@ -4,7 +4,6 @@ import Text.Megaparsec (sepBy, some)
 import Text.Megaparsec.Char (char, eol)
 import Text.Megaparsec.Char.Lexer (decimal)
 import UTIL.Parsers (Parser, parse')
-import Data.Maybe (catMaybes)
 import Data.List (nub)
 
 pInput :: Parser ([(Int, Int)], [Int])
@@ -15,9 +14,7 @@ pInput = (,) <$> (pRanges <* eol) <*> pItems
     pItems = sepBy decimal eol
 
 part1 :: [(Int, Int)] -> [Int] -> Int
-part1 ranges items = length $ nub $ catMaybes partial
-  where
-    partial = [if a <= x && x <= b then Just x else Nothing | (a,b) <- ranges, x <- items]
+part1 ranges items = length $ nub [x | (a,b) <- ranges, x <- items, a <= x && x <= b]
 
 part2 :: [(Int, Int)] -> Int
 part2 ranges = 
@@ -44,7 +41,7 @@ updateRanges ((x,y):xs) (a,b)
                                                     --  a--------b
 
   | otherwise = error $ "Alex forgot to think of a case?"
-  
+
 updateRanges [] (a,b) = [(a,b)] 
 
 

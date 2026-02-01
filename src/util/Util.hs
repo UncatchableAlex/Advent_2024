@@ -1,4 +1,5 @@
-module UTIL.Util (nofail, forceRight, arrayify2d, pairAdd, get2dArrayNeighbors, count) where
+module UTIL.Util (nofail, forceRight, arrayify2d, pairAdd, get2dArrayNeighbors, count, 
+                  binarySearch, extractPos2d, euclDist3) where
 
 import Data.Array (Array)
 import qualified Data.Array as A
@@ -46,3 +47,13 @@ binarySearch arr x = uncurry helper $ A.bounds arr
         where  
           mid = lo + ((hi - lo) `div` 2) 
           x' = arr A.! mid
+
+
+-- get a list of coordinates correspondong to the positions of a symbol in a 2d list
+extractPos2d :: (Eq a) => a -> [[a]] -> [(Int, Int)]
+extractPos2d x (n : ns) = [(i, j) | i <- [0 .. length ns], j <- [0 .. length n - 1], (n : ns) !! i !! j == x]
+extractPos2d _ [] = []
+
+
+euclDist3 :: (Floating a) => (a, a, a) -> (a, a, a) -> a
+euclDist3 (a1, b1, c1) (a2, b2, c2) = sqrt $ (a1 - a2) ** 2 + (b1 - b2) ** 2 + (c1 - c2) ** 2

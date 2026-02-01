@@ -83,7 +83,7 @@ extractAll q = case pop q of
   Just (tup, q') -> tup : extractAll q'
 
 fromList :: Ord k => [(k,v)] -> PQueue k v
-fromList kvs = foldl (\q' (k, v) -> push (k,v) q') empty kvs
+fromList kvs = foldl' (\q' (k, v) -> push (k,v) q') empty kvs
 
 snip :: Eq a => [a] -> a -> [a]
 snip (x:xs) y
