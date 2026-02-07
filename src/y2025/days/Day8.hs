@@ -1,11 +1,12 @@
 module Y2025.DAYS.Day8 (day8) where
 
-import Data.List (sort)
+import Data.List (sort, sortBy)
 import Text.Megaparsec (sepBy)
 import Text.Megaparsec.Char (char, eol)
 import Text.Megaparsec.Char.Lexer (decimal)
 import UTIL.Parsers (Parser, parse')
 import UTIL.Util (nofail, euclDist3)
+import Data.Ord (comparing)
 
 
 type Coord = (Double, Double, Double)
@@ -40,7 +41,7 @@ connect n m ls = (part1, part2)
     addToCircuit a b [] = [[a, b]]
     p1 circs (_, a, b) = addToCircuit a b circs
     circuits = foldl' p1 [] (take n dists)
-    part1 = product $ take m $ reverse $ sort $ map length circuits
+    part1 = product $ take m $ sortBy (comparing negate) $ map length circuits
 
     -- okay now we do part 2
     p2 (coord1, coord2, circs) (_, a, b) =
