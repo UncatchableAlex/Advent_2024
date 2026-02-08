@@ -1,5 +1,5 @@
 module UTIL.Util (nofail, forceRight, arrayify2d, pairAdd, get2dArrayNeighbors, count, 
-                  binarySearch, extractPos2d, euclDist3) where
+                  binarySearch, extractPos2d, euclDist3, powerset) where
 
 import Data.Array (Array)
 import qualified Data.Array as A
@@ -57,3 +57,10 @@ extractPos2d _ [] = []
 
 euclDist3 :: (Floating a) => (a, a, a) -> (a, a, a) -> a
 euclDist3 (a1, b1, c1) (a2, b2, c2) = sqrt $ (a1 - a2) ** 2 + (b1 - b2) ** 2 + (c1 - c2) ** 2
+
+
+powerset :: [[a]] -> [[[a]]]
+powerset [] = [[]]
+powerset (x:xs) =
+  let ps = powerset xs
+  in map (x:) ps ++ ps

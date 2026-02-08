@@ -68,4 +68,3 @@ day9 = do
   let p1 = parse' content $ biggestTile day1Constraint <$> pInput
   let p2 = parse' content $ biggestTile day2Constraint <$> pInput 
   pure (p1,p2)
-  
