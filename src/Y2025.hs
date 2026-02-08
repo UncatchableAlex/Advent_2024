@@ -9,7 +9,8 @@ import Y2025.DAYS.Day6 (day6)
 import Y2025.DAYS.Day7 (day7)
 import Y2025.DAYS.Day8 (day8)
 import Y2025.DAYS.Day9 (day9)
-
+import Y2025.DAYS.Day10 (day10)
+import Y2025.DAYS.Day11 (day11)
 
 
 days :: [IO (Int, Int)]
@@ -23,4 +24,6 @@ days =
   , day7
   , day8
   , day9
+  , day10
+  , day11
   ]

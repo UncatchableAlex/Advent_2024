@@ -95,9 +95,12 @@ library
         Y2025.DAYS.Day7,
         Y2025.DAYS.Day8,
         Y2025.DAYS.Day9,
+        Y2025.DAYS.Day10,
+        Y2025.DAYS.Day11,
         Y2025,
         UTIL.Parsers,
         UTIL.Util,
+        UTIL.LA,
         UTIL.PQueue,
         TESTS.PQueueTests
 
@@ -180,9 +183,12 @@ executable advent
         Y2025.DAYS.Day7,
         Y2025.DAYS.Day8,
         Y2025.DAYS.Day9,
+        Y2025.DAYS.Day10,
+        Y2025.DAYS.Day11,
         Y2025,
         UTIL.Parsers,
         UTIL.Util,
+        UTIL.LA,
         UTIL.PQueue,
         TESTS.PQueueTests
 
