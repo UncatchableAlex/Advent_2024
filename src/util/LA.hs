@@ -1,11 +1,11 @@
-module UTIL.LA (gaussREF, matvec) where
+module UTIL.LA (gausselim, matvec) where
 
 import Data.Array (Array, (!), (//))
 import qualified Data.Array as A
 
 -- https://en.wikipedia.org/wiki/Gaussian_elimination#Pseudocode
-gaussREF :: Array (Int, Int) Rational -> (Array (Int, Int) Rational, [Int])
-gaussREF ref = helper 0 0 ref
+gausselim :: Array (Int, Int) Rational -> (Array (Int, Int) Rational, [Int])
+gausselim ref = helper 0 0 ref
   where
     ((_,_),(m,n')) = A.bounds ref
     n = n'-1 -- ignore the augmented column

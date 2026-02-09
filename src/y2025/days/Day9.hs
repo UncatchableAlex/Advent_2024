@@ -65,6 +65,5 @@ day2Constraint [] _ _ = True
 day9 :: IO (Int, Int)
 day9 = do
   content <- readFile "src/y2025/inputs/day9.txt"
-  let p1 = parse' content $ biggestTile day1Constraint <$> pInput
-  let p2 = parse' content $ biggestTile day2Constraint <$> pInput 
-  pure (p1,p2)
+  let runPart constraint = parse' content $ biggestTile constraint <$> pInput
+  pure (runPart day1Constraint, runPart day2Constraint)
